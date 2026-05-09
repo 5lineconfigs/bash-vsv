@@ -8,7 +8,22 @@
 
 VSV_VERSION='v1.3.5'
 
-export SVDIR=${SVDIR:-/var/service}
+# Determine runit service directory
+
+if [ -z "$SVDIR" ]; then
+    if [ -d /var/service ]; then
+        SVDIR=/var/service
+    elif [ -d /etc/runit/runsvdir/default ]; then
+        SVDIR=/etc/runit/runsvdir/default
+    elif [ -d /run/runit/service ]; then
+        SVDIR=/run/runit/service
+    else
+        echo "FATAL: no runit service directory found" >&2
+        exit 1
+    fi
+fi
+
+export SVDIR
 
 charup='✔'
 chardown='X'
